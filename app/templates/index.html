@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="content-wrapper">
+<section class="content-header">
+  <h1>
+    Entradas
+    <small></small>
+  </h1>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <p class="aling-left" style="float:left"><a href="{% url 'entry_create' %}">
+        <button style="width: 150px;" class="btn btn-block btn-success">Adicionar Entrada</button>
+    </a></p>
+
+    <h4><span style="float:right;margin-bottom:10px;" class="label label-default">Total {{ page_obj.paginator.count }}</span></h4>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Listagem</h3>
+                    <div class="box-tools">
+                        <div class="input-group ui-widget" style="width: 150px">
+                            <input type="text" name="table_search" class="form-control input-sm pull-right" placeholder="Buscar">
+                            <div class="input-group-btn">
+                                <button class="btn btn-sm btn-default" style="font-size: 12px;"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tbody><tr>
+                            <th>Número</th>
+                            <th>Texto</th>
+                            <th width="200px">Acões</th>
+                        </tr>
+                        {% for entry in object_list %}
+                            <tr>
+                                <td>{{ entry.number }}</td>
+                                <td>{{ entry.text }}</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{% url 'entry_update' entry.id %}" class="btn btn-primary">Editar</a>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a href="{% url 'entry_delete' entry.id %}" class="btn btn-danger">Deletar</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="3">Nada.</td></tr>
+                        {% endfor %}
+                        </tbody></table>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+        </div>
+    </div>
+
+    {% if is_paginated %}
+
+        <nav>
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li>
+                    <a href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+            {% for i in pages_range %}
+                <li {% if page_obj.number == i %}class="active"{% endif %}><a href="?page={{i}}">{{ i }}</a></li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li>
+                  <a href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+            {% endif %}
+          </ul>
+        </nav>
+
+    {% endif %}
+
+
+
+<script>
+  $(function() {
+    $( "input[name=table_search]").autocomplete({
+      source: "{% url 'search_entries' %}",
+      minLength: 3,
+      select: function( event, ui ) {
+      	window.location.href = '/entry/edit/'+ ui.item.id;
+      }
+    });
+  });
+  </script>
+
+</section><!-- /.content -->
+</div><!-- /.content-wrapper -->
+
+{% endblock content %}
